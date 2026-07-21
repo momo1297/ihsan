@@ -22,6 +22,9 @@ export function RecipesList() {
           <div>
             <p className="text-body font-medium">
               {recipe.name} <span className="text-text-tertiary">· {recipe.servings} servings</span>
+              {recipe.defaultMealType && (
+                <span className="text-text-tertiary"> · {recipe.defaultMealType.toLowerCase()}</span>
+              )}
             </p>
             <p className="text-caption text-text-secondary">
               Per serving: {recipe.macrosPerServing.calories} kcal ·{" "}

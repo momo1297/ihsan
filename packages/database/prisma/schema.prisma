@@ -137,10 +137,11 @@ model Recipe {
   id           String   @id @default(cuid())
   userId       String
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  name         String
-  servings     Int      @default(1)
-  instructions String?
-  createdAt    DateTime @default(now())
+  name            String
+  servings        Int       @default(1)
+  instructions    String?
+  defaultMealType MealType?
+  createdAt       DateTime  @default(now())
 
   ingredients        RecipeIngredient[]
   mealItems          MealItem[]

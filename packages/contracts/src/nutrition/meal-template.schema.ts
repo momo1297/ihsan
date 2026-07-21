@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { calendarDateSchema } from "../common/date.schema";
-import { mealTypeSchema } from "./meal.schema";
+import { mealTypeSchema } from "../common/meal-type.schema";
 
 const mealTemplateItemInputSchema = z
   .object({

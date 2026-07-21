@@ -1,5 +1,6 @@
 import { Macros } from "../value-objects/macros.vo";
 import { macrosForRecipe, macrosPerServing } from "../services/macro-calculator.service";
+import { MealType } from "./meal.entity";
 
 export interface RecipeIngredientLine {
   id: string;
@@ -16,6 +17,7 @@ export class RecipeEntity {
     public readonly name: string,
     public readonly servings: number,
     public readonly instructions: string | null,
+    public readonly defaultMealType: MealType | null,
     public readonly lines: RecipeIngredientLine[],
     public readonly createdAt: Date,
   ) {}

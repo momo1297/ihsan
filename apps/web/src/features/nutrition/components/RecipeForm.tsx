@@ -57,9 +57,37 @@ export function RecipeForm() {
         {errors.name && <p className="text-caption text-danger">{errors.name.message}</p>}
       </div>
 
-      <div className="flex flex-col gap-1.5 sm:w-40">
-        <Label htmlFor="servings">Servings</Label>
-        <Input id="servings" type="number" min={1} {...register("servings", { valueAsNumber: true })} />
+      <div className="flex gap-4">
+        <div className="flex flex-col gap-1.5 sm:w-40">
+          <Label htmlFor="servings">Servings</Label>
+          <Input id="servings" type="number" min={1} {...register("servings", { valueAsNumber: true })} />
+        </div>
+
+        <div className="flex flex-col gap-1.5 sm:w-48">
+          <Label>Usually eaten at</Label>
+          <Controller
+            control={control}
+            name="defaultMealType"
+            render={({ field }) => (
+              <Select
+                value={field.value ?? "NONE"}
+                onValueChange={(value) => field.onChange(value === "NONE" ? undefined : value)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Not set" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="NONE">Not set</SelectItem>
+                  <SelectItem value="BREAKFAST">Breakfast</SelectItem>
+                  <SelectItem value="LUNCH">Lunch</SelectItem>
+                  <SelectItem value="DINNER">Dinner</SelectItem>
+                  <SelectItem value="SNACK">Snack</SelectItem>
+                </SelectContent>
+              </Select>
+            )}
+          />
+          <p className="text-caption text-text-tertiary">Controls which quick-log section it appears in.</p>
+        </div>
       </div>
 
       <div className="flex flex-col gap-1.5">

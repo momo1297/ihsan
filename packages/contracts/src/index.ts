@@ -1,4 +1,5 @@
 export * from "./common/date.schema";
+export * from "./common/meal-type.schema";
 export * from "./user.schema";
 
 export * from "./nutrition/ingredient.schema";

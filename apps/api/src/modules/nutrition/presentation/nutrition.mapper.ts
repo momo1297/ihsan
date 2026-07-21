@@ -23,6 +23,7 @@ export function toRecipeDto(entity: RecipeEntity): Recipe {
     name: entity.name,
     servings: entity.servings,
     instructions: entity.instructions,
+    defaultMealType: entity.defaultMealType,
     ingredients: entity.lines.map((line) => ({
       id: line.id,
       ingredientId: line.ingredientId,

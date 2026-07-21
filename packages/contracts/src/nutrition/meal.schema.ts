@@ -1,9 +1,7 @@
 import { z } from "zod";
 import { calendarDateSchema } from "../common/date.schema";
+import { mealTypeSchema } from "../common/meal-type.schema";
 import { macrosSchema } from "./recipe.schema";
-
-export const mealTypeSchema = z.enum(["BREAKFAST", "LUNCH", "DINNER", "SNACK"]);
-export type MealType = z.infer<typeof mealTypeSchema>;
 
 const mealItemInputSchema = z
   .object({

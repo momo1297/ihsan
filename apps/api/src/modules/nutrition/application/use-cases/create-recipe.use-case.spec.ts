@@ -27,7 +27,16 @@ class FakeRecipeRepository implements RecipeRepositoryPort {
   public created: { userId: string; input: CreateRecipeInput }[] = [];
   async create(userId: string, input: CreateRecipeInput): Promise<RecipeEntity> {
     this.created.push({ userId, input });
-    return new RecipeEntity("recipe-1", userId, input.name, input.servings ?? 1, null, [], new Date());
+    return new RecipeEntity(
+      "recipe-1",
+      userId,
+      input.name,
+      input.servings ?? 1,
+      null,
+      input.defaultMealType ?? null,
+      [],
+      new Date(),
+    );
   }
   async update(_id: string, _userId: string, _input: UpdateRecipeInput): Promise<RecipeEntity> {
     throw new Error("not needed for this test");

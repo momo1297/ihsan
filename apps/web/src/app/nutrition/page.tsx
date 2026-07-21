@@ -1,10 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { AppHeader } from "@/components/AppHeader";
 import { todayDateString } from "@/lib/utils";
 import { MacrosSummaryCard } from "@/features/nutrition/components/MacrosSummaryCard";
 import { MealsList } from "@/features/nutrition/components/MealsList";
+import { QuickLogMeals } from "@/features/nutrition/components/QuickLogMeals";
 import { LogMealForm } from "@/features/nutrition/components/LogMealForm";
 import { RecipeForm } from "@/features/nutrition/components/RecipeForm";
 import { RecipesList } from "@/features/nutrition/components/RecipesList";
@@ -15,6 +18,7 @@ import { useNutritionSummary } from "@/features/nutrition/api/summary.api";
 export default function NutritionPage() {
   const date = todayDateString();
   const { data: summary, isLoading: isSummaryLoading } = useNutritionSummary(date);
+  const [showCustomLog, setShowCustomLog] = useState(false);
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -29,7 +33,19 @@ export default function NutritionPage() {
             <CardTitle>Today&apos;s meals</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col gap-4">
-            <LogMealForm date={date} />
+            <QuickLogMeals date={date} />
+
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="self-start"
+              onClick={() => setShowCustomLog((v) => !v)}
+            >
+              {showCustomLog ? "Hide custom log" : "Log something else"}
+            </Button>
+            {showCustomLog && <LogMealForm date={date} />}
+
             <MealsList date={date} />
           </CardContent>
         </Card>

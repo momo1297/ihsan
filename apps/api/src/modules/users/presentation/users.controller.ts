@@ -3,20 +3,20 @@ import { updateUserProfileSchema, UpdateUserProfileInput } from "@ihsan/contract
 import { ClerkAuthGuard, AuthContext } from "../../../shared/guards/clerk-auth.guard";
 import { CurrentAuth } from "../../../shared/decorators/current-user.decorator";
 import { ZodValidationPipe } from "../../../shared/pipes/zod-validation.pipe";
-import { GetCurrentUserUseCase } from "../application/use-cases/get-current-user.use-case";
+import { EnsureCurrentUserUseCase } from "../application/use-cases/ensure-current-user.use-case";
 import { UpdateUserProfileUseCase } from "../application/use-cases/update-user-profile.use-case";
 
 @Controller("me")
 @UseGuards(ClerkAuthGuard)
 export class UsersController {
   constructor(
-    private readonly getCurrentUser: GetCurrentUserUseCase,
+    private readonly ensureCurrentUser: EnsureCurrentUserUseCase,
     private readonly updateUserProfile: UpdateUserProfileUseCase,
   ) {}
 
   @Get()
   async getMe(@CurrentAuth() auth: AuthContext) {
-    return this.getCurrentUser.execute(auth.clerkId);
+    return this.ensureCurrentUser.execute(auth.clerkId);
   }
 
   @Patch()

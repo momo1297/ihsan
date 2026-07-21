@@ -10,7 +10,8 @@
     "test": "turbo run test",
     "db:migrate": "pnpm --filter @ihsan/database exec prisma migrate dev",
     "db:generate": "pnpm --filter @ihsan/database exec prisma generate",
-    "db:studio": "pnpm --filter @ihsan/database exec prisma studio"
+    "db:studio": "pnpm --filter @ihsan/database exec prisma studio",
+    "db:seed": "pnpm --filter @ihsan/database exec prisma db seed"
   },
   "devDependencies": {
     "turbo": "^2.3.3",

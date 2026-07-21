@@ -17,19 +17,32 @@ interface OpenFoodFactsSearchResponse {
   products?: OpenFoodFactsProduct[];
 }
 
-const SEARCH_URL = "https://world.openfoodfacts.org/cgi/search.pl";
+const SEARCH_URL = "https://world.openfoodfacts.org/api/v2/search";
 const REQUEST_TIMEOUT_MS = 5000;
+const RETRY_COUNT = 2;
+const RETRY_DELAY_MS = 400;
 
 @Injectable()
 export class OpenFoodFactsAdapter implements FoodDatabasePort {
   private readonly logger = new Logger(OpenFoodFactsAdapter.name);
 
   async search(query: string): Promise<FoodSearchResult[]> {
+    for (let attempt = 1; attempt <= RETRY_COUNT; attempt++) {
+      const result = await this.searchOnce(query);
+      if (result !== null) {
+        return result;
+      }
+      if (attempt < RETRY_COUNT) {
+        await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS));
+      }
+    }
+    return [];
+  }
+
+  private async searchOnce(query: string): Promise<FoodSearchResult[] | null> {
     const url = new URL(SEARCH_URL);
     url.searchParams.set("search_terms", query);
-    url.searchParams.set("search_simple", "1");
-    url.searchParams.set("action", "process");
-    url.searchParams.set("json", "1");
+    url.searchParams.set("fields", "code,product_name,brands,nutriments");
     url.searchParams.set("page_size", "15");
 
     const controller = new AbortController();
@@ -42,7 +55,7 @@ export class OpenFoodFactsAdapter implements FoodDatabasePort {
       });
       if (!response.ok) {
         this.logger.warn(`OpenFoodFacts search failed with status ${response.status}`);
-        return [];
+        return null;
       }
       const body = (await response.json()) as OpenFoodFactsSearchResponse;
       return (body.products ?? [])
@@ -50,7 +63,7 @@ export class OpenFoodFactsAdapter implements FoodDatabasePort {
         .filter((result): result is FoodSearchResult => result !== null);
     } catch (error) {
       this.logger.warn(`OpenFoodFacts search errored: ${(error as Error).message}`);
-      return [];
+      return null;
     } finally {
       clearTimeout(timeout);
     }
