@@ -1,0 +1,26 @@
+name: Deploy
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
+
+jobs:
+  deploy:
+    if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main'
+    runs-on: ubuntu-latest
+    env:
+      RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Install Railway CLI
+        run: npm install -g @railway/cli
+
+      - name: Deploy api
+        run: railway up --service api --environment production --ci
+
+      - name: Deploy web
+        run: railway up --service web --environment production --ci
