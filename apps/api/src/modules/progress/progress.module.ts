@@ -31,6 +31,6 @@ import { ResolveCurrentUserGuard } from "../../shared/guards/resolve-current-use
     { provide: WEIGHT_ENTRY_REPOSITORY, useClass: PrismaWeightEntryRepository },
     { provide: MEASUREMENT_REPOSITORY, useClass: PrismaMeasurementRepository },
   ],
-  exports: [GetLatestWeightEntryUseCase],
+  exports: [GetLatestWeightEntryUseCase, ListWeightEntriesUseCase, ListMeasurementsUseCase],
 })
 export class ProgressModule {}

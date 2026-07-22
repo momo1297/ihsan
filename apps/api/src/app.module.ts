@@ -11,6 +11,7 @@ import { GoalsModule } from "./modules/goals/goals.module";
 import { TrainingModule } from "./modules/training/training.module";
 import { ProgressModule } from "./modules/progress/progress.module";
 import { DashboardModule } from "./modules/dashboard/dashboard.module";
+import { AiCoachModule } from "./modules/ai-coach/ai-coach.module";
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { DashboardModule } from "./modules/dashboard/dashboard.module";
     TrainingModule,
     ProgressModule,
     DashboardModule,
+    AiCoachModule,
   ],
   providers: [
     { provide: APP_FILTER, useClass: DomainExceptionFilter },

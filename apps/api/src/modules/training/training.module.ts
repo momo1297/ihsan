@@ -71,6 +71,13 @@ import { ResolveCurrentUserGuard } from "../../shared/guards/resolve-current-use
     { provide: SESSION_REPOSITORY, useClass: PrismaSessionRepository },
     { provide: PERSONAL_RECORD_REPOSITORY, useClass: PrismaPersonalRecordRepository },
   ],
-  exports: [ListProgramsUseCase, ListSessionsUseCase, GetTodaysWorkoutDayUseCase],
+  exports: [
+    ListProgramsUseCase,
+    ListSessionsUseCase,
+    GetTodaysWorkoutDayUseCase,
+    ListPersonalRecordsUseCase,
+    ListExercisesUseCase,
+    GetExerciseHistoryUseCase,
+  ],
 })
 export class TrainingModule {}

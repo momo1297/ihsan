@@ -6,6 +6,7 @@ import { UpdateHabitUseCase } from "./application/use-cases/update-habit.use-cas
 import { LogHabitUseCase } from "./application/use-cases/log-habit.use-case";
 import { ListHabitsUseCase } from "./application/use-cases/list-habits.use-case";
 import { GetWeeklyHabitCompletionUseCase } from "./application/use-cases/get-weekly-habit-completion.use-case";
+import { GetHabitAdherenceUseCase } from "./application/use-cases/get-habit-adherence.use-case";
 import { HABIT_REPOSITORY } from "./application/ports/habit.repository.port";
 import { PrismaHabitRepository } from "./infrastructure/repositories/prisma-habit.repository";
 import { ResolveCurrentUserGuard } from "../../shared/guards/resolve-current-user.guard";
@@ -20,8 +21,9 @@ import { ResolveCurrentUserGuard } from "../../shared/guards/resolve-current-use
     LogHabitUseCase,
     ListHabitsUseCase,
     GetWeeklyHabitCompletionUseCase,
+    GetHabitAdherenceUseCase,
     { provide: HABIT_REPOSITORY, useClass: PrismaHabitRepository },
   ],
-  exports: [ListHabitsUseCase, GetWeeklyHabitCompletionUseCase],
+  exports: [ListHabitsUseCase, GetWeeklyHabitCompletionUseCase, GetHabitAdherenceUseCase],
 })
 export class HabitsModule {}

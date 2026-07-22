@@ -409,7 +409,12 @@ model ChatMessage {
   conversation   ChatConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
   role           ChatRole
   content        String
+  /** Tool calls requested by the assistant on this message, if any. */
   toolCalls      Json?
+  /** For role TOOL: which requested call this message answers. */
+  toolCallId     String?
+  /** For role TOOL: the tool's name, alongside toolCallId. */
+  toolName       String?
   createdAt      DateTime         @default(now())
 
   @@index([conversationId, createdAt])

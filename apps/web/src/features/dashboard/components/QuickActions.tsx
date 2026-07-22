@@ -13,8 +13,8 @@ export function QuickActions() {
       <Button asChild size="sm" variant="outline">
         <Link href="/training">Start workout</Link>
       </Button>
-      <Button size="sm" variant="ghost" disabled title="Coming in a future sprint">
-        AI Coach
+      <Button asChild size="sm" variant="outline">
+        <Link href="/coach">AI Coach</Link>
       </Button>
     </div>
   );

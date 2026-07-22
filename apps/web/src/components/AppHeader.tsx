@@ -6,6 +6,7 @@ const NAV_LINKS = [
   { href: "/nutrition", label: "Nutrition" },
   { href: "/training", label: "Training" },
   { href: "/progress", label: "Progress" },
+  { href: "/coach", label: "AI Coach" },
 ];
 
 export function AppHeader() {
