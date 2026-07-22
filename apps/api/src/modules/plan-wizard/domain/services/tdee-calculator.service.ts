@@ -10,6 +10,8 @@ export interface TdeeInput {
   jobType: JobType;
   daysPerWeek: number;
   goalDirection: WeightGoalDirection;
+  /** Desired rate of weight change. When omitted, falls back to a fixed 500/300 kcal deficit/surplus. */
+  weightChangePaceKgPerMonth?: number | null;
 }
 
 export interface MacroTargets {
@@ -30,6 +32,17 @@ const CALORIES_PER_GRAM_CARB = 4;
 const CALORIES_PER_GRAM_FAT = 9;
 const LOSE_DEFICIT_CALORIES = 500;
 const GAIN_SURPLUS_CALORIES = 300;
+
+const KCAL_PER_KG_BODY_MASS = 7700;
+const DAYS_PER_MONTH = 30;
+const MIN_DAILY_CALORIE_DELTA = 150;
+const MAX_DAILY_CALORIE_DELTA = 1000;
+
+/** Converts a desired rate of weight change into a daily calorie deficit/surplus, clamped to a safe range. */
+export function paceToDailyCalorieDelta(paceKgPerMonth: number): number {
+  const rawDelta = (paceKgPerMonth * KCAL_PER_KG_BODY_MASS) / DAYS_PER_MONTH;
+  return Math.min(MAX_DAILY_CALORIE_DELTA, Math.max(MIN_DAILY_CALORIE_DELTA, Math.round(rawDelta)));
+}
 
 function calculateBmr(sex: BiologicalSex, weightKg: number, heightCm: number, age: number): number {
   const base = 10 * weightKg + 6.25 * heightCm - 5 * age;
@@ -64,9 +77,12 @@ export function calculateMacroTargets(input: TdeeInput): MacroTargets {
   const bmr = calculateBmr(input.sex, input.weightKg, input.heightCm, input.age);
   const tdee = bmr * activityMultiplier(input.jobType, input.daysPerWeek);
 
+  const dailyDelta =
+    input.weightChangePaceKgPerMonth != null ? paceToDailyCalorieDelta(input.weightChangePaceKgPerMonth) : null;
+
   let calories = tdee;
-  if (input.goalDirection === "LOSE") calories -= LOSE_DEFICIT_CALORIES;
-  if (input.goalDirection === "GAIN") calories += GAIN_SURPLUS_CALORIES;
+  if (input.goalDirection === "LOSE") calories -= dailyDelta ?? LOSE_DEFICIT_CALORIES;
+  if (input.goalDirection === "GAIN") calories += dailyDelta ?? GAIN_SURPLUS_CALORIES;
   calories = Math.max(MIN_CALORIES, Math.round(calories));
 
   const proteinGrams = Math.round(input.weightKg * PROTEIN_GRAMS_PER_KG);

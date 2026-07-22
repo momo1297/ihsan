@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { ProposedPlan, SelectedMealRecipes } from "@ihsan/contracts";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 import { useApplyPlan } from "../api/wizard.api";
 
 const SLOTS = ["breakfast", "lunch", "dinner", "snack"] as const;
@@ -44,7 +45,19 @@ export function PlanPreview({
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h2 className="text-body font-semibold">Program: {plan.program.name}</h2>
+        <div className="flex items-center gap-2">
+          <h2 className="text-body font-semibold">Program: {plan.program.name}</h2>
+          <span
+            className={cn(
+              "rounded-full border px-2 py-0.5 text-micro uppercase",
+              plan.aiGenerated
+                ? "border-brand bg-brand/10 text-brand"
+                : "border-border bg-surface text-text-tertiary",
+            )}
+          >
+            {plan.aiGenerated ? "Personalized by AI" : "Standard plan"}
+          </span>
+        </div>
         <div className="mt-2 flex flex-col gap-3">
           {plan.program.days.map((day) => (
             <div key={day.dayOrder} className="rounded-md border border-border bg-surface px-3 py-2">
@@ -81,6 +94,7 @@ export function PlanPreview({
           <p className="mt-1 text-caption text-text-secondary">
             {plan.weightGoal.direction === "LOSE" ? "Lose" : "Gain"} from {plan.weightGoal.startValue}kg to{" "}
             {plan.weightGoal.targetValue}kg
+            {plan.weightGoal.targetDate && <> — target date {plan.weightGoal.targetDate}</>}
           </p>
         </div>
       )}

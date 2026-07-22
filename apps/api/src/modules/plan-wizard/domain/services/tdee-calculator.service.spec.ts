@@ -1,4 +1,4 @@
-import { calculateMacroTargets } from "./tdee-calculator.service";
+import { calculateMacroTargets, paceToDailyCalorieDelta } from "./tdee-calculator.service";
 
 describe("calculateMacroTargets", () => {
   it("computes higher TDEE for a physical job with more training days than a sedentary job with none", () => {
@@ -68,6 +68,20 @@ describe("calculateMacroTargets", () => {
     expect(heavy.proteinGrams).toBeGreaterThan(light.proteinGrams);
   });
 
+  it("uses a pace-derived deficit/surplus instead of the fixed constant when a pace is given", () => {
+    const base = { sex: "MALE" as const, age: 30, heightCm: 180, weightKg: 80, jobType: "MODERATE" as const, daysPerWeek: 3 };
+    const fixedGain = calculateMacroTargets({ ...base, goalDirection: "GAIN" });
+    const pacedGain = calculateMacroTargets({ ...base, goalDirection: "GAIN", weightChangePaceKgPerMonth: 2 });
+    expect(pacedGain.calories).not.toBe(fixedGain.calories);
+  });
+
+  it("does not apply a pace-derived delta when direction is MAINTAIN", () => {
+    const base = { sex: "MALE" as const, age: 30, heightCm: 180, weightKg: 80, jobType: "MODERATE" as const, daysPerWeek: 3 };
+    const withoutPace = calculateMacroTargets({ ...base, goalDirection: "MAINTAIN" });
+    const withPace = calculateMacroTargets({ ...base, goalDirection: "MAINTAIN", weightChangePaceKgPerMonth: 2 });
+    expect(withPace.calories).toBe(withoutPace.calories);
+  });
+
   it("keeps calories consistent with protein/fat/carb macro breakdown (within rounding)", () => {
     const result = calculateMacroTargets({
       sex: "MALE",
@@ -80,5 +94,19 @@ describe("calculateMacroTargets", () => {
     });
     const caloriesFromMacros = result.proteinGrams * 4 + result.carbsGrams * 4 + result.fatGrams * 9;
     expect(Math.abs(caloriesFromMacros - result.calories)).toBeLessThanOrEqual(5);
+  });
+});
+
+describe("paceToDailyCalorieDelta", () => {
+  it("converts a moderate monthly pace into a proportional daily calorie delta", () => {
+    expect(paceToDailyCalorieDelta(2)).toBe(Math.round((2 * 7700) / 30));
+  });
+
+  it("clamps an unsafely aggressive pace down to the maximum daily delta", () => {
+    expect(paceToDailyCalorieDelta(20)).toBe(1000);
+  });
+
+  it("clamps an unrealistically slow pace up to the minimum daily delta", () => {
+    expect(paceToDailyCalorieDelta(0.1)).toBe(150);
   });
 });

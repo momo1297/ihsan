@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { macrosSchema } from "../nutrition/recipe.schema";
+import { calendarDateSchema } from "../common/date.schema";
 
 export const experienceLevelSchema = z.enum(["BEGINNER", "INTERMEDIATE", "ADVANCED"]);
 export type ExperienceLevel = z.infer<typeof experienceLevelSchema>;
@@ -19,6 +20,15 @@ export type DietaryRestriction = z.infer<typeof dietaryRestrictionSchema>;
 export const weightGoalDirectionSchema = z.enum(["LOSE", "GAIN", "MAINTAIN"]);
 export type WeightGoalDirection = z.infer<typeof weightGoalDirectionSchema>;
 
+export const dayOfWeekSchema = z.enum(["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"]);
+export type DayOfWeek = z.infer<typeof dayOfWeekSchema>;
+
+export const otherActivitySchema = z.object({
+  dayOfWeek: dayOfWeekSchema,
+  activityType: z.string().min(1).max(40),
+});
+export type OtherActivity = z.infer<typeof otherActivitySchema>;
+
 export const planIntakeSchema = z.object({
   daysPerWeek: z.number().int().min(1).max(7),
   experienceLevel: experienceLevelSchema,
@@ -35,6 +45,9 @@ export const planIntakeSchema = z.object({
   currentWeightKg: z.number().positive(),
   heightCm: z.number().positive(),
   sex: z.enum(["MALE", "FEMALE"]),
+  programDurationWeeks: z.number().int().min(1).max(16),
+  otherActivities: z.array(otherActivitySchema).max(7),
+  weightChangePaceKgPerMonth: z.number().positive().max(4).nullable(),
 });
 export type PlanIntake = z.infer<typeof planIntakeSchema>;
 
@@ -72,6 +85,7 @@ export const proposedWeightGoalSchema = z.object({
   direction: weightGoalDirectionSchema,
   startValue: z.number(),
   targetValue: z.number().nullable(),
+  targetDate: calendarDateSchema.nullable(),
 });
 
 export const proposedPlanSchema = z.object({
@@ -80,8 +94,17 @@ export const proposedPlanSchema = z.object({
   mealSuggestions: mealSuggestionResultSchema,
   weightGoal: proposedWeightGoalSchema.nullable(),
   notes: z.array(z.string()),
+  aiGenerated: z.boolean(),
 });
 export type ProposedPlan = z.infer<typeof proposedPlanSchema>;
+
+/** Shape the LLM must return via tool call — validated, then merged with the deterministically-computed nutrition/goal numbers. */
+export const llmPlanContentSchema = z.object({
+  days: z.array(generatedDaySchema),
+  mealSuggestions: mealSuggestionResultSchema,
+  notes: z.array(z.string()),
+});
+export type LlmPlanContent = z.infer<typeof llmPlanContentSchema>;
 
 export const selectedMealRecipesSchema = z.object({
   breakfast: z.string().optional(),

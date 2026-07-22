@@ -79,6 +79,7 @@ export class ApplyPlanUseCase {
         startValue: input.weightGoal.startValue,
         targetValue: input.weightGoal.targetValue ?? input.weightGoal.startValue,
         startDate: today,
+        targetDate: input.weightGoal.targetDate ?? undefined,
       });
       goalId = goal.id;
     }

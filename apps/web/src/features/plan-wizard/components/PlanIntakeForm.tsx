@@ -1,8 +1,8 @@
 "use client";
 
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { planIntakeSchema, type DietaryRestriction, type PlanIntake } from "@ihsan/contracts";
+import { planIntakeSchema, type DayOfWeek, type DietaryRestriction, type PlanIntake } from "@ihsan/contracts";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -25,6 +25,9 @@ const DEFAULT_VALUES: PlanIntake = {
   currentWeightKg: 75,
   heightCm: 175,
   sex: "MALE",
+  programDurationWeeks: 8,
+  otherActivities: [],
+  weightChangePaceKgPerMonth: null,
 };
 
 const DIETARY_OPTIONS: { value: DietaryRestriction; label: string }[] = [
@@ -34,6 +37,18 @@ const DIETARY_OPTIONS: { value: DietaryRestriction; label: string }[] = [
   { value: "DAIRY_FREE", label: "Dairy-free" },
   { value: "NUT_FREE", label: "Nut-free" },
 ];
+
+const DAY_OF_WEEK_OPTIONS: { value: DayOfWeek; label: string }[] = [
+  { value: "MON", label: "Monday" },
+  { value: "TUE", label: "Tuesday" },
+  { value: "WED", label: "Wednesday" },
+  { value: "THU", label: "Thursday" },
+  { value: "FRI", label: "Friday" },
+  { value: "SAT", label: "Saturday" },
+  { value: "SUN", label: "Sunday" },
+];
+
+const MAX_OTHER_ACTIVITIES = 7;
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -72,6 +87,7 @@ export function PlanIntakeForm({
     resolver: zodResolver(planIntakeSchema),
     defaultValues: defaultValues ?? DEFAULT_VALUES,
   });
+  const otherActivities = useFieldArray({ control, name: "otherActivities" });
 
   const weightGoalDirection = watch("weightGoalDirection");
   const errorMessages = Object.values(errors)
@@ -182,7 +198,72 @@ export function PlanIntakeForm({
             )}
           />
         </Field>
+
+        <Field label="Program duration (weeks)">
+          <Controller
+            control={control}
+            name="programDurationWeeks"
+            render={({ field }) => (
+              <Select value={String(field.value)} onValueChange={(v) => field.onChange(Number(v))}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {[4, 6, 8, 12, 16].map((n) => (
+                    <SelectItem key={n} value={String(n)}>
+                      {n}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          />
+        </Field>
       </Section>
+
+      <div className="flex flex-col gap-3">
+        <h3 className="text-caption font-medium uppercase text-text-tertiary">Other regular activities (optional)</h3>
+        <div className="flex flex-col gap-2">
+          {otherActivities.fields.map((field, index) => (
+            <div key={field.id} className="flex items-center gap-2">
+              <Controller
+                control={control}
+                name={`otherActivities.${index}.dayOfWeek` as const}
+                render={({ field: dayField }) => (
+                  <Select value={dayField.value} onValueChange={dayField.onChange}>
+                    <SelectTrigger className="w-40">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {DAY_OF_WEEK_OPTIONS.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              <Input
+                placeholder="e.g. BJJ"
+                className="flex-1"
+                {...register(`otherActivities.${index}.activityType` as const)}
+              />
+              <Button type="button" variant="outline" onClick={() => otherActivities.remove(index)}>
+                Remove
+              </Button>
+            </div>
+          ))}
+        </div>
+        <Button
+          type="button"
+          variant="outline"
+          disabled={otherActivities.fields.length >= MAX_OTHER_ACTIVITIES}
+          onClick={() => otherActivities.append({ dayOfWeek: "MON", activityType: "" })}
+        >
+          Add activity
+        </Button>
+      </div>
 
       <Section title="Body stats">
         <Field label="Age">
@@ -295,13 +376,23 @@ export function PlanIntakeForm({
           />
         </Field>
         {weightGoalDirection !== "MAINTAIN" && (
-          <Field label="Target weight (kg)">
-            <Input
-              type="number"
-              step="0.1"
-              {...register("targetWeightKg", { valueAsNumber: true })}
-            />
-          </Field>
+          <>
+            <Field label="Target weight (kg)">
+              <Input
+                type="number"
+                step="0.1"
+                {...register("targetWeightKg", { valueAsNumber: true })}
+              />
+            </Field>
+            <Field label="Desired pace (kg/month)">
+              <Input
+                type="number"
+                step="0.1"
+                placeholder="e.g. 2"
+                {...register("weightChangePaceKgPerMonth", { valueAsNumber: true })}
+              />
+            </Field>
+          </>
         )}
       </Section>
 
