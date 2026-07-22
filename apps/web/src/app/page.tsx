@@ -13,10 +13,47 @@ import { MacrosRemainingBar } from "@/features/dashboard/components/MacrosRemain
 import { WeightGoalSummary } from "@/features/dashboard/components/WeightGoalSummary";
 import { WeeklyRollupCard } from "@/features/dashboard/components/WeeklyRollupCard";
 import { QuickActions } from "@/features/dashboard/components/QuickActions";
+import { usePrograms } from "@/features/training/api/programs.api";
+import { PlanWizardFlow } from "@/features/plan-wizard/components/PlanWizardFlow";
 
-export default function DashboardPage() {
+export default function HomePage() {
   const today = todayDateString();
-  const { data: dashboard, isLoading } = useDashboard();
+  const { data: programs, isLoading: programsLoading } = usePrograms();
+  const { data: dashboard, isLoading: dashboardLoading } = useDashboard();
+
+  const hasActiveProgram = (programs ?? []).some((program) => program.isActive);
+
+  if (programsLoading) {
+    return (
+      <div className="flex min-h-screen flex-col">
+        <AppHeader />
+        <p className="p-8 text-text-secondary">Loading...</p>
+      </div>
+    );
+  }
+
+  if (!hasActiveProgram) {
+    return (
+      <div className="flex min-h-screen flex-col">
+        <AppHeader />
+        <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 px-6 py-8">
+          <h1 className="text-title font-semibold">Welcome to Ihsan</h1>
+          <p className="text-text-secondary">
+            Let&apos;s set up your training program and nutrition targets first — this becomes your daily dashboard
+            once that&apos;s done.
+          </p>
+          <Card className="flex flex-1 flex-col">
+            <CardHeader>
+              <CardTitle>Talk to your coach</CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-1 flex-col">
+              <PlanWizardFlow />
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -28,7 +65,7 @@ export default function DashboardPage() {
           <QuickActions />
         </div>
 
-        {isLoading || !dashboard ? (
+        {dashboardLoading || !dashboard ? (
           <p className="text-text-secondary">Loading your day...</p>
         ) : (
           <>

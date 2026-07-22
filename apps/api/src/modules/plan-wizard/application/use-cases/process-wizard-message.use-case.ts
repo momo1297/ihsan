@@ -1,7 +1,10 @@
 import { Inject, Injectable } from "@nestjs/common";
-import type { PlanIntake, WizardChatMessage, WizardChatResponse } from "@ihsan/contracts";
+import { planIntakeSchema, WizardChatMessage, WizardChatResponse } from "@ihsan/contracts";
 import { LLM_CLIENT, LlmClientPort, LlmMessage, LlmToolDefinition } from "../../../ai-coach/application/ports/llm-client.port";
 import { GeneratePlanUseCase } from "./generate-plan.use-case";
+
+const CLARIFICATION_MESSAGE =
+  "Sorry, I got a bit confused there — could you answer with a single specific number rather than a range (e.g. \"5\" instead of \"5-6\")?";
 
 const SYSTEM_PROMPT = [
   "You are Ihsan's setup assistant. Have a SHORT, friendly conversation to gather what's needed to build the user",
@@ -80,8 +83,21 @@ export class ProcessWizardMessageUseCase {
 
     const proposeCall = result.toolCalls.find((call) => call.name === "proposePlan");
     if (proposeCall) {
-      const intake = JSON.parse(proposeCall.arguments) as PlanIntake;
-      const plan = await this.generatePlan.execute(userId, intake);
+      let rawArgs: unknown;
+      try {
+        rawArgs = JSON.parse(proposeCall.arguments);
+      } catch {
+        updatedHistory.push({ role: "assistant", content: CLARIFICATION_MESSAGE });
+        return { type: "question", message: CLARIFICATION_MESSAGE, history: updatedHistory };
+      }
+
+      const validation = planIntakeSchema.safeParse(rawArgs);
+      if (!validation.success) {
+        updatedHistory.push({ role: "assistant", content: CLARIFICATION_MESSAGE });
+        return { type: "question", message: CLARIFICATION_MESSAGE, history: updatedHistory };
+      }
+
+      const plan = await this.generatePlan.execute(userId, validation.data);
       return { type: "proposal", plan, history: updatedHistory };
     }
 
