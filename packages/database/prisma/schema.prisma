@@ -141,6 +141,8 @@ model Recipe {
   servings        Int       @default(1)
   instructions    String?
   defaultMealType MealType?
+  /** e.g. "vegetarian", "vegan", "glutenFree", "dairyFree", "nutFree" — used to filter suggestions by dietary restriction. */
+  dietaryTags     String[]  @default([])
   createdAt       DateTime  @default(now())
 
   ingredients        RecipeIngredient[]

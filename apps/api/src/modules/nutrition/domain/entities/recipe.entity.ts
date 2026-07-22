@@ -18,6 +18,7 @@ export class RecipeEntity {
     public readonly servings: number,
     public readonly instructions: string | null,
     public readonly defaultMealType: MealType | null,
+    public readonly dietaryTags: string[],
     public readonly lines: RecipeIngredientLine[],
     public readonly createdAt: Date,
   ) {}

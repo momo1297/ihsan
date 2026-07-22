@@ -35,6 +35,7 @@ class FakeRecipeRepository implements RecipeRepositoryPort {
       null,
       input.defaultMealType ?? null,
       [],
+      [],
       new Date(),
     );
   }

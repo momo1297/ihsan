@@ -18,6 +18,6 @@ import { ResolveCurrentUserGuard } from "../../shared/guards/resolve-current-use
     ListGoalsUseCase,
     { provide: GOAL_REPOSITORY, useClass: PrismaGoalRepository },
   ],
-  exports: [ListGoalsUseCase],
+  exports: [ListGoalsUseCase, CreateGoalUseCase],
 })
 export class GoalsModule {}

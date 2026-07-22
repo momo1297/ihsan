@@ -20,6 +20,7 @@ function toEntity(row: RecipeRow): RecipeEntity {
     row.servings,
     row.instructions,
     row.defaultMealType as MealType | null,
+    row.dietaryTags,
     row.ingredients.map((line) => ({
       id: line.id,
       ingredientId: line.ingredientId,

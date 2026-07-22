@@ -8,6 +8,7 @@ describe("RecipeEntity", () => {
     2,
     null,
     "LUNCH",
+    [],
     [
       {
         id: "line-1",

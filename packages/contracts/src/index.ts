@@ -21,3 +21,5 @@ export * from "./habits/habit.schema";
 export * from "./ai-coach/chat-message.schema";
 
 export * from "./dashboard.schema";
+
+export * from "./plan-wizard/plan-wizard.schema";

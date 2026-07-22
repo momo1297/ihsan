@@ -78,6 +78,8 @@ import { ResolveCurrentUserGuard } from "../../shared/guards/resolve-current-use
     ListPersonalRecordsUseCase,
     ListExercisesUseCase,
     GetExerciseHistoryUseCase,
+    CreateProgramUseCase,
+    ActivateProgramUseCase,
   ],
 })
 export class TrainingModule {}
