@@ -5,6 +5,7 @@ const NAV_LINKS = [
   { href: "/", label: "Dashboard" },
   { href: "/nutrition", label: "Nutrition" },
   { href: "/training", label: "Training" },
+  { href: "/progress", label: "Progress" },
 ];
 
 export function AppHeader() {

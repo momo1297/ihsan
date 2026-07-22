@@ -1,8 +1,26 @@
-import type { Exercise, PersonalRecord, Program, Session } from "@ihsan/contracts";
+import type { Exercise, PersonalRecord, Program, Session, WorkoutDay } from "@ihsan/contracts";
 import { ExerciseEntity } from "../domain/entities/exercise.entity";
-import { ProgramEntity } from "../domain/entities/program.entity";
+import { ProgramEntity, WorkoutDayLine } from "../domain/entities/program.entity";
 import { WorkoutSessionEntity } from "../domain/entities/workout-session.entity";
 import { PersonalRecordEntry } from "../application/ports/personal-record.repository.port";
+
+export function toWorkoutDayDto(day: WorkoutDayLine): WorkoutDay {
+  return {
+    id: day.id,
+    name: day.name,
+    dayOrder: day.dayOrder,
+    exercises: day.exercises.map((line) => ({
+      id: line.id,
+      exerciseId: line.exerciseId,
+      exerciseName: line.exerciseName,
+      order: line.order,
+      targetSets: line.targetSets,
+      targetRepsMin: line.targetRepsMin,
+      targetRepsMax: line.targetRepsMax,
+      restSeconds: line.restSeconds ?? undefined,
+    })),
+  };
+}
 
 export function toExerciseDto(entity: ExerciseEntity): Exercise {
   return {

@@ -88,5 +88,6 @@ import { ResolveCurrentUserGuard } from "../../shared/guards/resolve-current-use
     { provide: MEAL_TEMPLATE_REPOSITORY, useClass: PrismaMealTemplateRepository },
     { provide: FOOD_DATABASE, useClass: OpenFoodFactsAdapter },
   ],
+  exports: [GetDailyMacroSummaryUseCase, ListMealsByDateUseCase],
 })
 export class NutritionModule {}

@@ -9,6 +9,8 @@ import { NutritionModule } from "./modules/nutrition/nutrition.module";
 import { HabitsModule } from "./modules/habits/habits.module";
 import { GoalsModule } from "./modules/goals/goals.module";
 import { TrainingModule } from "./modules/training/training.module";
+import { ProgressModule } from "./modules/progress/progress.module";
+import { DashboardModule } from "./modules/dashboard/dashboard.module";
 
 @Module({
   imports: [
@@ -19,6 +21,8 @@ import { TrainingModule } from "./modules/training/training.module";
     HabitsModule,
     GoalsModule,
     TrainingModule,
+    ProgressModule,
+    DashboardModule,
   ],
   providers: [
     { provide: APP_FILTER, useClass: DomainExceptionFilter },

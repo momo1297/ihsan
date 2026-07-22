@@ -15,6 +15,7 @@ import { UpdateProgramUseCase } from "./application/use-cases/update-program.use
 import { ListProgramsUseCase } from "./application/use-cases/list-programs.use-case";
 import { ActivateProgramUseCase } from "./application/use-cases/activate-program.use-case";
 import { GetNextSuggestionUseCase } from "./application/use-cases/get-next-suggestion.use-case";
+import { GetTodaysWorkoutDayUseCase } from "./application/use-cases/get-todays-workout-day.use-case";
 
 import { CreateSessionUseCase } from "./application/use-cases/create-session.use-case";
 import { UpdateSessionUseCase } from "./application/use-cases/update-session.use-case";
@@ -56,6 +57,7 @@ import { ResolveCurrentUserGuard } from "../../shared/guards/resolve-current-use
     ListProgramsUseCase,
     ActivateProgramUseCase,
     GetNextSuggestionUseCase,
+    GetTodaysWorkoutDayUseCase,
     CreateSessionUseCase,
     UpdateSessionUseCase,
     ListSessionsUseCase,
@@ -69,5 +71,6 @@ import { ResolveCurrentUserGuard } from "../../shared/guards/resolve-current-use
     { provide: SESSION_REPOSITORY, useClass: PrismaSessionRepository },
     { provide: PERSONAL_RECORD_REPOSITORY, useClass: PrismaPersonalRecordRepository },
   ],
+  exports: [ListProgramsUseCase, ListSessionsUseCase, GetTodaysWorkoutDayUseCase],
 })
 export class TrainingModule {}
